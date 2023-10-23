@@ -1,0 +1,30 @@
+﻿services:
+   app:
+       build:
+           context: "."
+           dockerfile: ./Dockerfile
+       container_name: "WebApp"
+       environment: 
+            - "POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}"
+       ports:
+           - 80:80
+           - 443:443
+       depends_on:
+           - db
+       networks:
+           - app-network
+   db:
+       image: postgres
+       restart: always
+       container_name: "db"
+       env_file: ./env.env
+       volumes:
+          - ./Database/user.sql:/docker-entrypoint-initdb.d/user.sql
+          - database:/var/lib/postgresql/data
+       networks:
+           - app-network
+networks:
+   app-network:
+       driver: bridge
+volumes:
+  database:
